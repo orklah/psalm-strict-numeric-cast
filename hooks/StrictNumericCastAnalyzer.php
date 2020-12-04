@@ -43,13 +43,12 @@ class StrictNumericCastAnalyzer implements AfterExpressionAnalysisInterface
         ) {
             //this is good too. It's not a numeric-string but this is actually more precise
             return true;
-        } elseif ($previous_type instanceof Type\Atomic\TString) {
-            //this is what we're looking for. A string that is not numeric nor a literal numeric
-            return true;
-        } else {
-            //nothing to see here
+        } elseif (!$previous_type instanceof Type\Atomic\TString) {
+            //nothing to see here, it's not a string
             return true;
         }
+
+        //We're at the end! We should have found a non-numeric, non-literal numeric string
 
         if (IssueBuffer::accepts(
             new StrictNumericCast(
