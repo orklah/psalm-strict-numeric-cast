@@ -32,19 +32,33 @@ class StrictNumericCastAnalyzer implements AfterExpressionAnalysisInterface
             return true;
         }
 
-        $previous_type = $statements_source->getNodeTypeProvider()->getType($expr->expr);
+        $previous_union = $statements_source->getNodeTypeProvider()->getType($expr->expr);
 
-        if($previous_type instanceof Type\Atomic\TNumericString) {
-            //everything is good!
+        if($previous_union === null){
             return true;
-        } elseif (
-            $previous_type instanceof TLiteralString &&
-            preg_match('#\d#', $previous_type->value[0] ?? '') // will probably have to inverse the check to forbid chars instead
-        ) {
-            //this is good too. It's not a numeric-string but this is actually more precise
-            return true;
-        } elseif (!$previous_type instanceof Type\Atomic\TString) {
-            //nothing to see here, it's not a string
+        }
+
+        $eligible_type = null;
+        foreach($previous_union->getAtomicTypes() as $previous_type) {
+            if ($previous_type instanceof Type\Atomic\TNumericString) {
+                //everything is good!
+                continue;
+            } elseif (
+                $previous_type instanceof TLiteralString &&
+                preg_match('#\d#', $previous_type->value[0] ?? '') // will probably have to inverse the check to forbid chars instead
+            ) {
+                //this is good too. It's not a numeric-string but this is actually more precise
+                continue;
+            } elseif (!$previous_type instanceof Type\Atomic\TString) {
+                //nothing to see here, it's not a string
+                continue;
+            } else {
+                $eligible_type = $previous_type;
+            }
+        }
+
+        if($eligible_type === null){
+            // we didn't found any standard string.
             return true;
         }
 
