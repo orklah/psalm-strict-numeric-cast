@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Orklah\PsalmStrictNumericCast\Hooks;
 
-use Orklah\PsalmInsaneComparison\Hooks\InsaneComparison;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Cast\Int_;
 use PhpParser\Node\Expr\Cast\Double;
