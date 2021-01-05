@@ -1,4 +1,4 @@
-# psalm-insane-comparison
+# psalm-strict-numeric-cast 
 A [Psalm](https://github.com/vimeo/psalm) plugin to restrict the use of (int) and (float) to numeric-string only
 
 Installation:
