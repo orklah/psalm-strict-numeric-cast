@@ -4,29 +4,24 @@ declare(strict_types=1);
 
 namespace Orklah\PsalmStrictNumericCast\Hooks;
 
-use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Cast\Int_;
 use PhpParser\Node\Expr\Cast\Double;
-use Psalm\Codebase;
 use Psalm\CodeLocation;
-use Psalm\Context;
 use Psalm\Issue\PluginIssue;
 use Psalm\IssueBuffer;
-use Psalm\Plugin\Hook\AfterExpressionAnalysisInterface;
-use Psalm\StatementsSource;
+use Psalm\Plugin\EventHandler\AfterExpressionAnalysisInterface;
+use Psalm\Plugin\EventHandler\Event\AfterExpressionAnalysisEvent;
 use Psalm\Type;
 use Psalm\Type\Atomic\TLiteralString;
 
 class StrictNumericCastAnalyzer implements AfterExpressionAnalysisInterface
 {
     public static function afterExpressionAnalysis(
-        Expr $expr,
-        Context $context,
-        StatementsSource $statements_source,
-        Codebase $codebase,
-        array &$file_replacements = []
+        AfterExpressionAnalysisEvent $event
     ): ?bool
     {
+        $expr = $event->getExpr();
+        $statements_source = $event->getStatementsSource();
         if(!$expr instanceof Int_ && !$expr instanceof Double){
             return true;
         }
