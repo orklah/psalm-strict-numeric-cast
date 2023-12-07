@@ -43,6 +43,13 @@ class StrictNumericCastAnalyzer implements AfterExpressionAnalysisInterface
             ) {
                 //this is good too. It's not a numeric-string but this is actually more precise
                 continue;
+            } elseif (
+                $previous_type instanceof TLiteralString &&
+                $previous_type->value === ''
+            ) {
+                // literal empty strings are safe as they work as expected
+                // common use case ''|numeric-string
+                continue;
             } elseif (!$previous_type instanceof Type\Atomic\TString) {
                 //nothing to see here, it's not a string
                 continue;
