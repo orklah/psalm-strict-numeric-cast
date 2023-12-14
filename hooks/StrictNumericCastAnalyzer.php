@@ -39,9 +39,10 @@ class StrictNumericCastAnalyzer implements AfterExpressionAnalysisInterface
                 continue;
             } elseif (
                 $previous_type instanceof TLiteralString &&
-                preg_match('#\d#', $previous_type->value[0] ?? '') // will probably have to inverse the check to forbid chars instead
+                // ' +5 foo' can be casted to int 5
+                // ' -.5 foo' can be casted to float -0.5
+                preg_match('#^\s*[+-]?\.?\d#', $previous_type->value)
             ) {
-                //this is good too. It's not a numeric-string but this is actually more precise
                 continue;
             } elseif (
                 $previous_type instanceof TLiteralString &&
