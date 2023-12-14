@@ -68,7 +68,7 @@ class StrictNumericCastAnalyzer implements AfterExpressionAnalysisInterface
 
         if (IssueBuffer::accepts(
             new StrictNumericCast(
-                'Unsafe cast from numeric to string. Consider documenting the string as numeric-string.',
+                'Unsafe cast from string to numeric. Consider documenting the string as numeric-string.',
                 new CodeLocation($statements_source, $expr)
             ),
             $statements_source->getSuppressedIssues()
