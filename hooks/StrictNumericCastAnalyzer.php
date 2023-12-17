@@ -39,9 +39,15 @@ class StrictNumericCastAnalyzer implements AfterExpressionAnalysisInterface
                 continue;
             } elseif (
                 $previous_type instanceof TLiteralString &&
-                preg_match('#\d#', $previous_type->value[0] ?? '') // will probably have to inverse the check to forbid chars instead
+                is_numeric( $previous_type->value )
             ) {
-                //this is good too. It's not a numeric-string but this is actually more precise
+                continue;
+            } elseif (
+                $previous_type instanceof TLiteralString &&
+                $previous_type->value === ''
+            ) {
+                // literal empty strings are safe as they work as expected
+                // common use case ''|numeric-string
                 continue;
             } elseif (!$previous_type instanceof Type\Atomic\TString) {
                 //nothing to see here, it's not a string
@@ -60,7 +66,7 @@ class StrictNumericCastAnalyzer implements AfterExpressionAnalysisInterface
 
         if (IssueBuffer::accepts(
             new StrictNumericCast(
-                'Unsafe cast from numeric to string. Consider documenting the string as numeric-string.',
+                'Unsafe cast from string to numeric. Consider documenting the string as numeric-string.',
                 new CodeLocation($statements_source, $expr)
             ),
             $statements_source->getSuppressedIssues()
